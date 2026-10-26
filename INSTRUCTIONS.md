@@ -6,6 +6,8 @@ You are an AI agent working inside one of Jatin's project folders. Follow this p
 - **Repo:** https://github.com/Jatin-Jain-123/portfolio (public)
 - **Local clone (usually present):** `C:\Users\jatin\Downloads\projects\portfolio`
 
+For background on how the site works and why (architecture, schema, trade-offs), see [`PLAN.md`](PLAN.md). Only needed if you are changing more than a project entry.
+
 You only ever touch **two things**: one entry in `projects.json` and one logo file in `logos/`. Never edit `index.html`, `assets/app.js` or `assets/style.css` to add a project.
 
 ---

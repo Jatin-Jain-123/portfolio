@@ -7,3 +7,4 @@ A static, dependency-free GitHub Pages site that shows my projects as a grid of 
 - Project data lives in [`projects.json`](projects.json); logos live in [`logos/`](logos/).
 - To add or update a project, follow [`INSTRUCTIONS.md`](INSTRUCTIONS.md) (written for AI agents, works for humans too).
 - `node scripts/validate.mjs` checks the data; it also runs in GitHub Actions on every push.
+- Technical details, architecture, decisions and trade-offs: [`PLAN.md`](PLAN.md), the single source of truth for anyone (or any AI agent) working on this repo.
