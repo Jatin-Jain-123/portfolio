@@ -1,0 +1,15 @@
+{
+  "github-releases":    { "label": "GitHub Releases",     "action": "Download from" },
+  "vscode-marketplace": { "label": "VS Code Marketplace", "action": "Get it on" },
+  "npm":                { "label": "npm",                 "action": "Install from" },
+  "pypi":               { "label": "PyPI",                "action": "Install from" },
+  "chrome-web-store":   { "label": "Chrome Web Store",    "action": "Get it on" },
+  "microsoft-store":    { "label": "Microsoft Store",     "action": "Get it on" },
+  "play-store":         { "label": "Google Play",         "action": "Get it on" },
+  "app-store":          { "label": "App Store",           "action": "Download on the" },
+  "telegram":           { "label": "Telegram",            "action": "Open in" },
+  "website":            { "label": "Website",             "action": "Visit the" },
+  "docker-hub":         { "label": "Docker Hub",          "action": "Pull from" },
+  "homebrew":           { "label": "Homebrew",            "action": "Install with" },
+  "winget":             { "label": "winget",              "action": "Install with" }
+}

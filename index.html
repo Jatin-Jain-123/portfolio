@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jatin Jain · Portfolio</title>
+  <meta name="description" content="Product-minded builder. I turn small, real problems into things people actually use.">
+  <meta property="og:title" content="Jatin Jain · Portfolio">
+  <meta property="og:description" content="Product-minded builder. I turn small, real problems into things people actually use.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='42' font-family='system-ui,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EJJ%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="hero">
+    <h1>Jatin Jain</h1>
+    <p class="tagline">Product-minded builder. I turn small, real problems into things people actually use.</p>
+    <nav class="socials" aria-label="Contact and social links">
+      <a href="https://github.com/Jatin-Jain-123" target="_blank" rel="noopener" data-tip="GitHub" aria-label="GitHub">
+        <span class="icon" data-icon="assets/social/github.svg"></span>
+      </a>
+      <a href="https://www.linkedin.com/in/jatin-jain-123-" target="_blank" rel="noopener" data-tip="LinkedIn" aria-label="LinkedIn">
+        <span class="icon" data-icon="assets/social/linkedin.svg"></span>
+      </a>
+      <a href="mailto:jatin321jain@gmail.com" data-tip="jatin321jain@gmail.com" aria-label="Email jatin321jain@gmail.com">
+        <span class="icon" data-icon="assets/social/email.svg"></span>
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="filters" class="filters" role="toolbar" aria-label="Filter projects by tag" hidden></div>
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <p id="empty" class="empty" hidden></p>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="year"></span> Jatin Jain</span>
+  </footer>
+
+  <template id="tile-template">
+    <article class="tile">
+      <div class="tile-head">
+        <a class="logo" target="_blank" rel="noopener"></a>
+        <h2 class="title"></h2>
+      </div>
+      <p class="desc"></p>
+      <ul class="tags"></ul>
+      <ul class="platforms"></ul>
+    </article>
+  </template>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

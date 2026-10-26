@@ -1,0 +1,9 @@
+# Portfolio
+
+Live: **https://jatin-jain-123.github.io/portfolio/**
+
+A static, dependency-free GitHub Pages site that shows my projects as a grid of tiles.
+
+- Project data lives in [`projects.json`](projects.json); logos live in [`logos/`](logos/).
+- To add or update a project, follow [`INSTRUCTIONS.md`](INSTRUCTIONS.md) (written for AI agents, works for humans too).
+- `node scripts/validate.mjs` checks the data; it also runs in GitHub Actions on every push.
