@@ -181,6 +181,18 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
 
 .title { margin: 0; font-size: 1.2rem; line-height: 1.25; letter-spacing: -0.01em; }
 
+/* ™ / ® after the project name; positioned rather than vertical-align so line height doesn't jump. */
+.mark {
+  position: relative;
+  top: -0.7em;
+  margin-left: 2px;
+  font-size: .55em;
+  font-weight: 600;
+  vertical-align: baseline;
+  color: var(--muted);
+  cursor: default;
+}
+
 .desc { margin: 0; color: var(--muted); font-size: .95rem; flex: 1; }
 
 .tags, .platforms { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; }
@@ -256,6 +268,9 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
   font-size: .85rem;
   padding: 24px 16px 40px;
 }
+.footer p { margin: 4px 0; }
+.tm-notice { font-size: .78rem; opacity: .85; }
+.tm-notice[hidden] { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

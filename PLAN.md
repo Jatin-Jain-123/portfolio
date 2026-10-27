@@ -16,6 +16,10 @@ This repo has exactly **one job: publicly display Jatin Jain's portfolio of proj
 - **Local clone:** `C:\Users\jatin\Downloads\projects\portfolio`
 - **Tagline (header):** "Product-minded builder. I turn small, real problems into things people actually use."
 
+**Ownership, copyright and trademarks:** every project shown is created by, and registered under the name of, Jatin Jain.
+- **Copyright:** the site and this repo are © Jatin Jain, all rights reserved. There is no open-source license on purpose; "public" means visible, not licensed for reuse. The © symbol appears in the page footer (`© 2026 Jatin Jain. All rights reserved.`, which becomes a range like `2026–2027` automatically), the `<meta name="copyright">` tag, and the README footer.
+- **Trademarks:** every project name is displayed with a superscript **™** by default. It becomes **®** only when the owner **explicitly** says that project's trademark is registered (then the entry gets `"mark": "r"`). Agents must never infer registration.
+
 **Why it's a public repo:** GitHub Pages is free only for public repositories, so this repo is public by necessity. **Everything committed here is public.** Nothing confidential or proprietary may ever land in it.
 
 **Who writes the content:** AI agents working in each project's own folder add that project's tile by following `INSTRUCTIONS.md`. The owner's per-project `CLAUDE.md` files point agents there. The owner chose **not** to reference it from the global `~/.claude/CLAUDE.md`; don't add it there.
@@ -55,14 +59,16 @@ Top to bottom:
 2. **Tag filter bar:** chips `All N`, then each tag with its count, sorted by count descending and then alphabetically. **Rendered only when ≥ 2 distinct tags exist.** Single-select: clicking the active chip (or `All`) clears the filter.
 3. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
 4. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
-5. **Footer:** `© <current year> Jatin Jain`.
+5. **Footer:**
+   - Line 1: `© <years> Jatin Jain. All rights reserved.` Years = `START_YEAR` (2026, in `app.js`), or `2026–<current>` once the current year is later.
+   - Line 2, the trademark notice, shown only when ≥ 1 project exists. It names only the mark types in use: *"Product names marked ™ are trademarks of Jatin Jain."*, *"…marked ® are registered trademarks…"*, or both combined (*"Product names marked ™ are trademarks, and those marked ® are registered trademarks, of Jatin Jain."*).
 
 **Each tile contains:**
 
 | Element | Behaviour |
 |---|---|
 | Logo (56×56) | `<a>` to `pageUrl`, new tab. Tooltip: **"Open project page for full details"**. If `logo` is missing or fails to load, a coloured letter is shown instead (first letter of title; hue derived from a hash of the slug). |
-| Title | `<h2>` |
+| Title | `<h2>` with the plain name followed by `<sup class="mark">™</sup>` (or `®` when `mark: "r"`). The mark has a tooltip *"<Title> is a trademark of Jatin Jain"* (or *"…registered trademark…"*) and is keyboard-focusable. |
 | Description | Problem solved and value to the user, plain text |
 | Tags | Small buttons; clicking one applies that filter |
 | Platform icons | One 36×36 button per platform, each `<a>` to its URL in a new tab. Tooltip: `"<action> <label>"`, e.g. "Get it on VS Code Marketplace". Section hidden if `platforms` is empty. |
@@ -116,10 +122,11 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
   "projects": [
     {
       "slug": "lemiki",                       // required. lowercase kebab-case ^[a-z0-9]+(-[a-z0-9]+)*$, unique, = public repo name
-      "title": "Lemiki",                      // required. 1–40 chars
+      "title": "Lemiki",                      // required. 1–40 chars, plain name: no ™ ® © or (TM)/(R)/(C)
+      "mark": "r",                            // optional. "tm" | "r". Omit = ™ (default). "r" = ® only on the owner's explicit word
       "logo": "logos/lemiki.png",             // optional. under logos/, .svg|.png|.webp|.jpg|.jpeg, ≤ 300 KB, must exist
       "pageUrl": "https://jatin-jain-123.github.io/lemiki/", // required. https; public GitHub Pages site
-      "description": "…",                     // required. 40–240 chars, plain text: problem and value
+      "description": "…",                     // required. 40–240 chars, plain text: problem and value; no ™ ® © symbols
       "tags": ["Desktop", "Fun"],             // optional. ≤ 3 strings, each 1–24 chars, Title Case by convention
       "platforms": [                          // required (may be []). no duplicate types
         { "type": "vscode-marketplace", "url": "https://…" } // type ∈ platforms.json keys; url https; no other keys
@@ -155,6 +162,7 @@ Current keys (13): `github-releases`, `vscode-marketplace`, `npm`, `pypi`, `chro
 - **Defensive filtering:** entries missing `slug` or `title` are skipped at runtime, even though the validator should already prevent them.
 - **XSS safety:** all data goes in through `textContent` / attributes, **never `innerHTML`**. URLs pass through `safeUrl()`, which allows only `http:`/`https:`, so `javascript:` URLs are dropped. Unknown platform types are silently skipped.
 - **Icons:** monochrome SVGs are rendered as CSS masks (`mask-image` set inline from JS) over `background-color: currentColor`, so one SVG adapts to light/dark/hover colours. The mask image is set **inline** (not via a CSS custom property) so relative URLs resolve against the document, not the stylesheet.
+- **Trademark marks:** `MARKS = { tm: "™", r: "®" }` with nouns for tooltips. `markOf(p)` falls back to ™ for a missing or unknown value. The symbol is appended as a `<sup class="mark">` after the title text. It's styled with `position: relative; top: -0.7em` (not `vertical-align: super`) so the title's line height doesn't shift. The logo's `aria-label` includes the symbol. `renderTrademarkNotice()` builds the footer notice from the marks actually used. `OWNER` and `START_YEAR` constants live at the top of `app.js`.
 - **Tooltips:** pure CSS from a `data-tip` attribute (`::after`). Elements at the start of a row get class `tip-start` (left-anchored) so tips don't clip off the left edge on small screens. Tooltips are hover/focus only; on touch devices `aria-label` carries the meaning.
 - **Filtering:** toggles the `hidden` attribute on tiles. **CSS must keep `.tile[hidden] { display: none; }`**, because `.tile { display:flex }` would otherwise override `hidden`. (This was a real bug, caught in testing.)
 - **Accessibility:** semantic landmarks, `aria-live` grid, `aria-pressed` on chips, `aria-label` on icon-only links, visible `:focus-visible` outlines, `prefers-reduced-motion` disables transitions, external links use `rel="noopener"`.
@@ -167,7 +175,7 @@ Current keys (13): `github-releases`, `vscode-marketplace`, `npm`, `pypi`, `chro
 
 - Both JSON files parse; `projects` is an array.
 - Every platform registry key has an SVG and string `label`/`action`.
-- Per entry: allowed fields only; slug format and uniqueness; title length; description 40–240; `pageUrl` https; logo path/extension/existence/size; tags count and length; platform types known, unique, https, no extra keys; `order` numeric; `addedOn` a real `YYYY-MM-DD` date.
+- Per entry: allowed fields only; slug format and uniqueness; title length; **no ™/®/©/(TM)/(R)/(C) in title or description**; `mark` ∈ {`tm`, `r`}; description 40–240; `pageUrl` https; logo path/extension/existence/size; tags count and length; platform types known, unique, https, no extra keys; `order` numeric; `addedOn` a real `YYYY-MM-DD` date.
 
 CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI doesn't block deployment.** Pages deploys from `main` independently, so a bad push can go live. Agents must validate **before** pushing. This trade-off is accepted (see §9).
 
@@ -198,6 +206,8 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 | Logo click target | Project's public GitHub Pages site | Repo URL | Two-repo model (§2): source repos are private. The Pages site is the public detail page. |
 | Validation | Node script + CI, unknown fields rejected | JSON Schema + ajv; no validation | Zero deps (no `npm install`). Precise human-readable errors that agents can act on. Strictness catches typos. **Cost:** CI doesn't gate deploys. |
 | Deploy | Branch-based Pages | Actions-based Pages deploy gated on validation | Simplest setup. **Cost:** an invalid push goes live until fixed. Upgrade path: switch Pages source to "GitHub Actions" and deploy only after `validate` passes. |
+| Trademark symbol | Rendered by the page from a `mark` field (default ™) | Agents type ™/® into `title` | One consistent style and position. Upgrading to ® is a one-field change. The footer notice can be derived from it. Titles stay clean for `aria-label`s, tooltips and sorting. The validator forbids symbols in text so they can't double up. |
+| Copyright years | `START_YEAR`–current, computed in JS | Hard-coded year | Never goes stale; no yearly commit needed. |
 | Theme | Auto via `prefers-color-scheme` | Manual toggle | No JS state or storage; matches the OS. |
 | Fonts | System font stack | Google Fonts | No external requests, instant render. |
 | Line endings | `.gitattributes` forcing LF | Default autocrlf | The owner is on Windows; prevents noisy whole-file diffs from agents. |
@@ -220,7 +230,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
   - Dark mode: add `--blink-settings=preferredColorScheme=0`.
   - Phone width: headless Chrome enforces a minimum window width, so load the page inside a 375px-wide `<iframe>` wrapper page.
   - Tooltips: inject CSS forcing `[data-tip]::after { opacity:1 }`.
-- **Checklist:** filter hides/shows tiles; `#tag=X` deep link works; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; dark-mode contrast of the selected chip; tooltips not clipped.
+- **Checklist:** ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; filter hides/shows tiles; `#tag=X` deep link works; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; dark-mode contrast of the selected chip; tooltips not clipped.
 
 ---
 
@@ -230,10 +240,11 @@ When changing anything beyond a single project entry:
 
 1. **Schema change** (add/rename/remove a field): update `ALLOWED` and the checks in `scripts/validate.mjs`, the rendering in `assets/app.js`, the field table and example in `INSTRUCTIONS.md`, and §5 here. Migrate existing entries in the same commit.
 2. **New platform type:** SVG in `assets/platforms/`, entry in `assets/platforms.json`, row in INSTRUCTIONS.md's platform table, key list in §5.
-3. **Header/social/tagline change:** `index.html` (header and `<meta>`/OG description) and §1 here.
-4. **Design change:** edit tokens in `:root` and the dark block in `style.css`. Re-run the visual tests in §11.
-5. Run the validator, commit with a descriptive message, push to `main`, verify the deploy (§8).
-6. **Update this file** in the same commit if any fact in it changed.
+3. **Trademark/copyright change:** a project becomes registered → set `"mark": "r"` on that entry only. Owner name or start year → the `OWNER`/`START_YEAR` constants in `app.js`, the footer and `<meta name="copyright">` in `index.html`, the README footer, and §1 here.
+4. **Header/social/tagline change:** `index.html` (header and `<meta>`/OG description) and §1 here.
+5. **Design change:** edit tokens in `:root` and the dark block in `style.css`. Re-run the visual tests in §11.
+6. Run the validator, commit with a descriptive message, push to `main`, verify the deploy (§8).
+7. **Update this file** in the same commit if any fact in it changed.
 
 ---
 
@@ -245,9 +256,11 @@ When changing anything beyond a single project entry:
 - Multi-select filter or a search box once the project count grows.
 - Automated link checking (detect dead `pageUrl`/platform links) on a schedule.
 - Open Graph preview image.
+- Show the mark in other places where a project name appears, if any are added later (e.g. per-project OG text).
 
 ---
 
 ## 14. History
 
 - **2026-10-27:** Repo created. Site template, `INSTRUCTIONS.md`, validator, CI, and Pages deployment set up. No project entries yet (by design; each project's agent adds its own).
+- **2026-10-27:** Added copyright notices (footer with auto year range, meta tag, README) and trademark marks: superscript ™ after every project name by default, ® via `"mark": "r"` on the owner's explicit instruction. The footer trademark notice and validator rules were added with it.

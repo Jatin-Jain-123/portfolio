@@ -25,7 +25,9 @@ for (const [key, meta] of Object.entries(platforms)) {
   if (typeof meta.label !== "string" || typeof meta.action !== "string") fail(`platforms.json "${key}"`, `needs string "label" and "action"`);
 }
 
-const ALLOWED = new Set(["slug", "title", "logo", "pageUrl", "description", "tags", "platforms", "order", "addedOn"]);
+const ALLOWED = new Set(["slug", "title", "logo", "pageUrl", "description", "tags", "platforms", "order", "addedOn", "mark"]);
+const MARKS = new Set(["tm", "r"]);
+const LEGAL_SYMBOLS = /[™®©]|\((tm|r|c)\)/i;
 const LOGO_EXT = new Set([".svg", ".png", ".webp", ".jpg", ".jpeg"]);
 const MAX_LOGO_BYTES = 300 * 1024;
 
@@ -48,9 +50,13 @@ if (!data || !Array.isArray(data.projects)) {
     else slugs.add(p.slug);
 
     if (typeof p.title !== "string" || !p.title.trim() || p.title.length > 40) fail(at, `"title" is required, max 40 characters`);
+    else if (LEGAL_SYMBOLS.test(p.title)) fail(at, `"title" must not contain ™/®/©; the page adds the mark itself (see "mark")`);
+
+    if (p.mark !== undefined && !MARKS.has(p.mark)) fail(at, `"mark" must be "tm" or "r" (omit it for the default ™)`);
 
     if (typeof p.description !== "string" || p.description.length < 40 || p.description.length > 240)
       fail(at, `"description" must be 40-240 characters (is ${typeof p.description === "string" ? p.description.length : "missing"})`);
+    else if (LEGAL_SYMBOLS.test(p.description)) fail(at, `"description" must not contain ™/®/© symbols`);
 
     if (!isHttps(p.pageUrl)) fail(at, `"pageUrl" must be an https URL to the project's public GitHub Pages site`);
 

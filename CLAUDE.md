@@ -1,0 +1,1 @@
+Whenever working with this repo, read the PLAN.md file to understand everything

@@ -19,6 +19,7 @@ You only ever touch **two things**: one entry in `projects.json` and one logo fi
 3. **Commit and push straight to `main`.** No PRs.
 4. **Don't touch other projects' entries or logos.**
 5. If a required value can't be found (see step 2), **ask the user** rather than guessing. Never invent URLs.
+6. **Trademarks.** Every project is Jatin's trademark. The page automatically shows a superscript **™** after each project name. Set `"mark": "r"` (shows **®**) **only when the user explicitly says the mark is registered**. Never infer it, and never type ™, ®, © (or `(TM)`, `(R)`, `(C)`) into `title` or `description`; the validator rejects them.
 
 ---
 
@@ -39,7 +40,8 @@ cd portfolio
 | Field | Required | Where to find it / rules |
 |---|---|---|
 | `slug` | ✅ | Lowercase kebab-case, unique, stable forever. Use the **public** repo name, lowercased (e.g. `lemiki`). |
-| `title` | ✅ | The product's display name, ≤ 40 chars (e.g. `Lemiki`). |
+| `title` | ✅ | The product's display name, ≤ 40 chars (e.g. `Lemiki`). Plain name only, with **no ™/®/© symbols** (the page adds the mark). |
+| `mark` | optional | Trademark symbol after the title. **Omit it** for the default **™**. Use `"r"` for **®** only when the user explicitly says the trademark is registered. The only allowed values are `"tm"` and `"r"`. |
 | `pageUrl` | ✅ | The project's **public GitHub Pages URL**: `https://jatin-jain-123.github.io/<public-repo>/`. The logo links here. **Not** a repo URL, and never the private repo. Check that it loads (`curl -sI <url>` returns 200). If the project has no Pages site yet, stop and ask the user. |
 | `description` | ✅ | 40–240 chars, one or two sentences. Say **what problem it solves and the value to the user**, not the tech stack. Plain text, no markdown. Good: *"A tiny cat that lives on your desktop and reacts to your builds, tests and typing, so coding feels a little less lonely."* Bad: *"An Electron app written in TypeScript using IPC."* |
 | `logo` | recommended | Path `logos/<slug>.<ext>` (`.svg` preferred, else `.png`/`.webp`/`.jpg`), square, ≥ 128×128 for raster images, ≤ 300 KB. Take it from the project's own icon/branding assets (app icon, extension icon, favicon). If no logo exists, leave the field out; the page shows a coloured letter instead. |
@@ -106,7 +108,7 @@ The file has this shape. Insert your object into the `projects` array (anywhere;
 }
 ```
 
-(The above is an **illustration**. Use your project's real values.)
+(The above is an **illustration**. Use your project's real values.) It has no `mark` field, so it renders as **Lemiki™**. Add `"mark": "r"` only when the user says the trademark is registered.
 
 No other fields are allowed; the validator rejects unknown keys.
 
@@ -142,6 +144,10 @@ Report the live URL back to the user: https://jatin-jain-123.github.io/portfolio
 
 ---
 
+## Upgrading ™ to ® (registered trademark)
+
+Only when the user explicitly says a project's trademark is now registered: add `"mark": "r"` to that entry (leave everything else unchanged), validate, then commit with `portfolio: mark <title> as registered (®)`. To revert, remove the field.
+
 ## Removing a project
 
 Delete its object from `projects.json` and its file from `logos/`, validate, then commit with `portfolio: remove <title>`. Only do this when the user asks.
@@ -158,5 +164,6 @@ Only when a project is published somewhere that isn't in the table above:
 ## How the page works (for reference)
 
 - `index.html` contains the header (name, tagline, socials) and an empty grid.
-- `assets/app.js` fetches `projects.json` and `assets/platforms.json` and builds one tile per project: logo (links to `pageUrl`, tooltip *"Open project page for full details"*), title, description, tags, and platform icons (each links to its URL, tooltip e.g. *"Get it on VS Code Marketplace"*).
+- `assets/app.js` fetches `projects.json` and `assets/platforms.json` and builds one tile per project: logo (links to `pageUrl`, tooltip *"Open project page for full details"*), title with a superscript ™/® (tooltip *"<Title> is a trademark of Jatin Jain"*), description, tags, and platform icons (each links to its URL, tooltip e.g. *"Get it on VS Code Marketplace"*).
+- The footer shows `© <years> Jatin Jain. All rights reserved.` plus a trademark notice that mentions only the mark types in use.
 - Tags power the filter bar above the grid. It appears automatically once at least two distinct tags exist. Clicking a chip (or a tag on a tile) shows only matching projects, and the URL becomes shareable (`/portfolio/#tag=CLI`).

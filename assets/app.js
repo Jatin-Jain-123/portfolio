@@ -7,7 +7,19 @@
   const emptyEl = document.getElementById("empty");
   const template = document.getElementById("tile-template");
 
-  document.getElementById("year").textContent = new Date().getFullYear();
+  const OWNER = "Jatin Jain";
+
+  // Copyright years: "2026", becoming "2026–2027" etc. as time passes.
+  const START_YEAR = 2026;
+  const thisYear = new Date().getFullYear();
+  document.getElementById("year").textContent = thisYear > START_YEAR ? `${START_YEAR}–${thisYear}` : String(START_YEAR);
+
+  // Every project name carries a mark. ™ by default; ® only when the entry says "mark": "r".
+  const MARKS = {
+    tm: { symbol: "™", noun: "trademark" },
+    r: { symbol: "®", noun: "registered trademark" },
+  };
+  const markOf = (project) => MARKS[project.mark] || MARKS.tm;
 
   function setIcon(el, src) {
     const value = `url("${src}")`;
@@ -58,7 +70,8 @@
     if (pageUrl) logo.href = pageUrl;
     logo.dataset.tip = "Open project page for full details";
     logo.classList.add("tip-start");
-    logo.setAttribute("aria-label", `${project.title}: open project page`);
+    const mark = markOf(project);
+    logo.setAttribute("aria-label", `${project.title}${mark.symbol}: open project page`);
 
     if (project.logo) {
       const img = document.createElement("img");
@@ -71,7 +84,14 @@
       logo.append(fallbackLogo(project));
     }
 
-    node.querySelector(".title").textContent = project.title;
+    const titleEl = node.querySelector(".title");
+    titleEl.textContent = project.title;
+    const sup = document.createElement("sup");
+    sup.className = "mark";
+    sup.textContent = mark.symbol;
+    sup.dataset.tip = `${project.title} is a ${mark.noun} of ${OWNER}`;
+    sup.tabIndex = 0;
+    titleEl.append(sup);
     node.querySelector(".desc").textContent = project.description;
 
     const tagsEl = node.querySelector(".tags");
@@ -111,7 +131,19 @@
     return node;
   }
 
+  // Footer notice naming only the mark types actually in use.
+  function renderTrademarkNotice(projects) {
+    const used = new Set(projects.map((p) => markOf(p).symbol));
+    const parts = [];
+    if (used.has("™")) parts.push("marked ™ are trademarks");
+    if (used.has("®")) parts.push(`${parts.length ? "those " : ""}marked ® are registered trademarks`);
+    const el = document.getElementById("tm-notice");
+    el.textContent = `Product names ${parts.join(", and ")}${parts.length > 1 ? "," : ""} of ${OWNER}.`;
+    el.hidden = false;
+  }
+
   function render(projects, platforms) {
+    renderTrademarkNotice(projects);
     const tiles = projects.map((p) => ({ project: p, el: buildTile(p, platforms, selectTag) }));
     tiles.forEach((t) => grid.append(t.el));
 

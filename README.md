@@ -8,3 +8,7 @@ A static, dependency-free GitHub Pages site that shows my projects as a grid of 
 - To add or update a project, follow [`INSTRUCTIONS.md`](INSTRUCTIONS.md) (written for AI agents, works for humans too).
 - `node scripts/validate.mjs` checks the data; it also runs in GitHub Actions on every push.
 - Technical details, architecture, decisions and trade-offs: [`PLAN.md`](PLAN.md), the single source of truth for anyone (or any AI agent) working on this repo.
+
+---
+
+© 2026 Jatin Jain. All rights reserved. Project names shown on the site are trademarks (™) or, where marked, registered trademarks (®) of Jatin Jain.
