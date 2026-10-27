@@ -1,0 +1,21 @@
+<!-- Lemiki app icon: the cat-face mark on a rounded dark tile. Drawn from scratch for this project. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFB26B"/>
+      <stop offset="1" stop-color="#F0803C"/>
+    </linearGradient>
+    <mask id="face">
+      <g transform="translate(256 272) scale(0.78) translate(-256 -272)">
+        <path fill="#fff" stroke="#fff" stroke-width="28" stroke-linejoin="round" d="M256 432c-100 0-160-50-160-128 0-46 14-82 34-108l-10-108 92 54c14-4 28-6 44-6s30 2 44 6l92-54-10 108c20 26 34 62 34 108 0 78-60 128-160 128z"/>
+        <g fill="#000">
+          <ellipse cx="196" cy="296" rx="22" ry="30"/>
+          <ellipse cx="316" cy="296" rx="22" ry="30"/>
+          <path d="M240 350h32l-16 18z" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </g>
+      </g>
+    </mask>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="#2A2320"/>
+  <rect width="512" height="512" fill="url(#fur)" mask="url(#face)"/>
+</svg>

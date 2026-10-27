@@ -1,3 +1,27 @@
 {
-  "projects": []
+  "projects": [
+    {
+      "slug": "lemiki",
+      "title": "Lemiki",
+      "logo": "logos/lemiki.svg",
+      "pageUrl": "https://jatin-jain-123.github.io/lemiki/",
+      "description": "A tiny cat that lives on your desktop and reacts to your builds, tests and typing, so coding feels a little less lonely.",
+      "tags": [
+        "Desktop",
+        "VS Code Extension",
+        "Fun"
+      ],
+      "platforms": [
+        {
+          "type": "microsoft-store",
+          "url": "https://apps.microsoft.com/detail/9N3KJWB1CTH1"
+        },
+        {
+          "type": "vscode-marketplace",
+          "url": "https://marketplace.visualstudio.com/items?itemName=Jatin-Jain.lemiki"
+        }
+      ],
+      "addedOn": "2026-10-28"
+    }
+  ]
 }
