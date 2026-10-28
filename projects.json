@@ -22,6 +22,19 @@
         }
       ],
       "addedOn": "2026-10-28"
+    },
+    {
+      "slug": "carnet",
+      "title": "Carnet",
+      "logo": "logos/carnet.svg",
+      "pageUrl": "https://jatin-jain-123.github.io/carnet/",
+      "description": "Merge, reorder, compress and convert PDFs, Word documents and images right on your PC, so private files never have to be uploaded to a website.",
+      "tags": [
+        "Desktop",
+        "Productivity"
+      ],
+      "platforms": [],
+      "addedOn": "2026-10-29"
     }
   ]
 }
