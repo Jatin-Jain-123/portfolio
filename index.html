@@ -10,10 +10,15 @@
   <meta property="og:type" content="website">
   <meta name="copyright" content="© Jatin Jain. All rights reserved.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='42' font-family='system-ui,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EJJ%3C/text%3E%3C/svg%3E">
+  <!-- Apply a saved theme choice before first paint so there's no flash of the wrong theme. -->
+  <script>try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}</script>
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="hero">
+    <button id="theme-toggle" class="theme-toggle" type="button" data-tip="Switch theme" aria-label="Switch theme">
+      <span class="icon"></span>
+    </button>
     <h1>Jatin Jain</h1>
     <p class="tagline">Product-minded builder. I turn small, real problems into things people actually use.</p>
     <nav class="socials" aria-label="Contact and social links">

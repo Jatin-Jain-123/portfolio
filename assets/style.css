@@ -16,8 +16,10 @@
   color-scheme: light;
 }
 
+/* Dark tokens apply when the OS prefers dark (unless the visitor picked light), or when they picked dark.
+   The two blocks below must stay identical. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0e0e13;
     --surface: #17171f;
     --text: #ececf1;
@@ -33,6 +35,22 @@
     --shadow-hover: 0 12px 32px rgba(0, 0, 0, .45);
     color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+  --bg: #0e0e13;
+  --surface: #17171f;
+  --text: #ececf1;
+  --muted: #9b9bab;
+  --border: #2a2a36;
+  --accent: #8b85ff;
+  --accent-soft: #23224a;
+  --on-accent: #0e0e13;
+  --chip-bg: #22222c;
+  --tip-bg: #ececf1;
+  --tip-text: #16161d;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, .45);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -64,6 +82,7 @@ a { color: inherit; }
 
 /* ---------- Header ---------- */
 .hero {
+  position: relative;
   max-width: 1120px;
   margin: 0 auto;
   padding: 72px 16px 32px;
@@ -100,6 +119,29 @@ a { color: inherit; }
 }
 .socials a:hover, .socials a:focus-visible { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
 .socials .icon { width: 18px; height: 18px; }
+
+/* Light/dark toggle, top-right of the header. Its tooltip opens below and right-aligned so it stays on-screen.
+   `.hero` raises specificity above the later `[data-tip] { position: relative }`. */
+.hero .theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color .15s, border-color .15s, transform .15s;
+}
+.theme-toggle:hover, .theme-toggle:focus-visible { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+.theme-toggle .icon { width: 18px; height: 18px; }
+.theme-toggle[data-tip]::after { bottom: auto; top: calc(100% + 8px); left: auto; right: 0; transform: translate(0, -4px); }
+.theme-toggle[data-tip]:hover::after, .theme-toggle[data-tip]:focus-visible::after { transform: translate(0, 0); }
 
 /* ---------- Filters ---------- */
 main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }

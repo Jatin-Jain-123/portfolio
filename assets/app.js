@@ -29,6 +29,30 @@
 
   document.querySelectorAll("[data-icon]").forEach((el) => setIcon(el, el.dataset.icon));
 
+  // Light/dark toggle. Follows the OS until the visitor picks one; the choice is kept in localStorage
+  // and applied before first paint by the inline script in index.html.
+  const root = document.documentElement;
+  const themeToggle = document.getElementById("theme-toggle");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const currentTheme = () => root.dataset.theme || (prefersDark.matches ? "dark" : "light");
+
+  function syncThemeToggle() {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    const label = `Switch to ${next} mode`;
+    themeToggle.dataset.tip = label;
+    themeToggle.setAttribute("aria-label", label);
+    setIcon(themeToggle.querySelector(".icon"), next === "dark" ? "assets/theme/moon.svg" : "assets/theme/sun.svg");
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch { /* storage blocked: choice lasts for this page view */ }
+    syncThemeToggle();
+  });
+  prefersDark.addEventListener("change", syncThemeToggle);
+  syncThemeToggle();
+
   // Only ever link to http(s) URLs coming from the data file.
   function safeUrl(url) {
     try {

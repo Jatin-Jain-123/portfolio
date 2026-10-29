@@ -77,7 +77,7 @@ Top to bottom:
 
 **URL state:** the active filter is mirrored in the hash as `#tag=<Tag>` (via `history.replaceState`, so no history spam). Loading a URL with `#tag=X` applies the filter. An unknown tag falls back to "All".
 
-**Theming:** light/dark follows `prefers-color-scheme` automatically. There is no manual toggle (deliberate: less JS, nothing to persist).
+**Theming:** light/dark follows `prefers-color-scheme` by default. A round sun/moon button at the top-right of the header switches theme; its tooltip and `aria-label` say what it will switch to ("Switch to dark mode"). The choice is saved in `localStorage` under `theme` (`"light"`/`"dark"`) and set as `data-theme` on `<html>` by a tiny inline script in `<head>`, so it applies before first paint (no flash). With no saved choice, the page keeps following the OS live.
 
 ---
 
@@ -96,8 +96,8 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
 
 | Path | Purpose | Who edits |
 |---|---|---|
-| `index.html` | Shell: meta/OG tags, inline-SVG "JJ" favicon (data URI), header, socials, filter container, grid, empty state, footer, `<template>` for a tile | Maintainers only |
-| `assets/style.css` | All styling; design tokens as CSS custom properties on `:root`, dark overrides in `@media (prefers-color-scheme: dark)` | Maintainers only |
+| `index.html` | Shell: meta/OG tags, inline-SVG "JJ" favicon (data URI), inline pre-paint theme script, header, theme toggle, socials, filter container, grid, empty state, footer, `<template>` for a tile | Maintainers only |
+| `assets/style.css` | All styling; design tokens as CSS custom properties on `:root`; dark overrides twice, identically: in `@media (prefers-color-scheme: dark)` on `:root:not([data-theme="light"])`, and on `:root[data-theme="dark"]` | Maintainers only |
 | `assets/app.js` | Rendering, filtering, sorting, URL hash, icon masking, fallback logos. Vanilla ES2020 in an IIFE, no globals | Maintainers only |
 | `projects.json` | **The data.** `{ "projects": [ ... ] }` | Project agents (via INSTRUCTIONS.md) |
 | `logos/<slug>.<ext>` | Project logos | Project agents |
@@ -105,6 +105,7 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
 | `assets/platforms.json` | Platform registry: `key → { label, action }` | Maintainers / agents adding a platform type |
 | `assets/platforms/<key>.svg` | Monochrome platform icons, one per registry key | Same |
 | `assets/social/*.svg` | Header social icons (github, linkedin, email) | Maintainers |
+| `assets/theme/*.svg` | Theme toggle icons (sun, moon), hand-drawn | Maintainers |
 | `scripts/validate.mjs` | Data validator (Node ≥ 18, zero deps) | Maintainers |
 | `.github/workflows/validate.yml` | Runs the validator on push to `main` and on PRs (Node 22) | Maintainers |
 | `.nojekyll` | Disables Jekyll so files are served verbatim and quickly | Leave it |
@@ -208,7 +209,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 | Deploy | Branch-based Pages | Actions-based Pages deploy gated on validation | Simplest setup. **Cost:** an invalid push goes live until fixed. Upgrade path: switch Pages source to "GitHub Actions" and deploy only after `validate` passes. |
 | Trademark symbol | Rendered by the page from a `mark` field (default ™) | Agents type ™/® into `title` | One consistent style and position. Upgrading to ® is a one-field change. The footer notice can be derived from it. Titles stay clean for `aria-label`s, tooltips and sorting. The validator forbids symbols in text so they can't double up. |
 | Copyright years | `START_YEAR`–current, computed in JS | Hard-coded year | Never goes stale; no yearly commit needed. |
-| Theme | Auto via `prefers-color-scheme` | Manual toggle | No JS state or storage; matches the OS. |
+| Theme | `prefers-color-scheme` by default + manual toggle persisted in `localStorage` | Auto only (the original choice); toggle without persistence | Owner asked for a toggle (2026-10-29). Defaulting to the OS keeps first visits right; persisting avoids re-toggling on every visit. **Cost:** dark tokens are duplicated in two CSS blocks that must stay identical. |
 | Fonts | System font stack | Google Fonts | No external requests, instant render. |
 | Line endings | `.gitattributes` forcing LF | Default autocrlf | The owner is on Windows; prevents noisy whole-file diffs from agents. |
 
@@ -217,7 +218,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 ## 10. Security and privacy
 
 - Public repo: **no secrets, tokens, private repo names/URLs, or proprietary details**. The owner's email is intentionally public (header `mailto:`).
-- Client: `textContent` only, protocol allow-list on URLs, `rel="noopener"` on new-tab links, no third-party scripts, no cookies or storage.
+- Client: `textContent` only, protocol allow-list on URLs, `rel="noopener"` on new-tab links, no third-party scripts, no cookies. The only storage is the `theme` key in `localStorage` (a UI preference, never sent anywhere).
 - Validator enforces https for every outbound link and confines logo paths to `logos/` (no `..`).
 
 ---
@@ -228,9 +229,10 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 - **Visual:** serve a scratch copy with sample entries (never commit sample entries to the real `projects.json`). Screenshot with headless Chrome, e.g.
   `chrome --headless=new --window-size=1280,1000 --virtual-time-budget=3000 --screenshot=out.png http://localhost:8765/`.
   - Dark mode: add `--blink-settings=preferredColorScheme=0`.
+  - Forced theme: load with the toggle state preset, e.g. a wrapper page that sets `localStorage.theme` then redirects, or inject `document.documentElement.dataset.theme = "dark"`.
   - Phone width: headless Chrome enforces a minimum window width, so load the page inside a 375px-wide `<iframe>` wrapper page.
   - Tooltips: inject CSS forcing `[data-tip]::after { opacity:1 }`.
-- **Checklist:** ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; filter hides/shows tiles; `#tag=X` deep link works; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; dark-mode contrast of the selected chip; tooltips not clipped.
+- **Checklist:** theme toggle flips light/dark, its icon and tooltip update, and the choice survives a reload; ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; filter hides/shows tiles; `#tag=X` deep link works; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; dark-mode contrast of the selected chip; tooltips not clipped.
 
 ---
 
@@ -242,7 +244,7 @@ When changing anything beyond a single project entry:
 2. **New platform type:** SVG in `assets/platforms/`, entry in `assets/platforms.json`, row in INSTRUCTIONS.md's platform table, key list in §5.
 3. **Trademark/copyright change:** a project becomes registered → set `"mark": "r"` on that entry only. Owner name or start year → the `OWNER`/`START_YEAR` constants in `app.js`, the footer and `<meta name="copyright">` in `index.html`, the README footer, and §1 here.
 4. **Header/social/tagline change:** `index.html` (header and `<meta>`/OG description) and §1 here.
-5. **Design change:** edit tokens in `:root` and the dark block in `style.css`. Re-run the visual tests in §11.
+5. **Design change:** edit tokens in `:root` and **both** dark blocks in `style.css`. Re-run the visual tests in §11.
 6. Run the validator, commit with a descriptive message, push to `main`, verify the deploy (§8).
 7. **Update this file** in the same commit if any fact in it changed.
 
@@ -264,3 +266,4 @@ When changing anything beyond a single project entry:
 
 - **2026-10-27:** Repo created. Site template, `INSTRUCTIONS.md`, validator, CI, and Pages deployment set up. No project entries yet (by design; each project's agent adds its own).
 - **2026-10-27:** Added copyright notices (footer with auto year range, meta tag, README) and trademark marks: superscript ™ after every project name by default, ® via `"mark": "r"` on the owner's explicit instruction. The footer trademark notice and validator rules were added with it.
+- **2026-10-29:** Added a light/dark toggle button (top-right of the header). Defaults to the OS preference; an explicit choice is saved in `localStorage` and applied before first paint.
