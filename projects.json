@@ -35,6 +35,20 @@
       ],
       "platforms": [],
       "addedOn": "2026-10-29"
+    },
+    {
+      "slug": "copiamo",
+      "title": "Copiamo",
+      "logo": "logos/copiamo.svg",
+      "pageUrl": "https://jatin-jain-123.github.io/copiamo/",
+      "description": "A Windows clipboard with a memory: it keeps everything you copy, cut and paste with where it came from and where it went, so nothing you copied is ever lost.",
+      "tags": [
+        "Desktop",
+        "Productivity",
+        "AI"
+      ],
+      "platforms": [],
+      "addedOn": "2026-10-30"
     }
   ]
 }
