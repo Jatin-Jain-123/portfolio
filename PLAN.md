@@ -1,7 +1,7 @@
 # PLAN.md — Portfolio repo: single source of truth
 
 > **Read this first** if you are an AI agent (or human) changing anything in this repo.
-> - **Only adding/updating/removing a project entry?** Follow [`INSTRUCTIONS.md`](INSTRUCTIONS.md); it's the operational playbook. This file explains the *why* and *how* behind it.
+> - **Only adding/updating/removing a project entry?** Follow `INSTRUCTIONS.md` (private playbook, kept outside this repo); it's the operational playbook. This file explains the *why* and *how* behind it.
 > - **Changing the site itself** (layout, schema, platforms, tooling)? Read this whole file, then keep it, `INSTRUCTIONS.md`, and `scripts/validate.mjs` in sync (see [§12 Change checklist](#12-change-checklist)).
 
 ---
@@ -111,7 +111,6 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
 | `.github/workflows/validate.yml` | Runs the validator on push to `main` and on PRs (Node 22) | Maintainers |
 | `.nojekyll` | Disables Jekyll so files are served verbatim and quickly | Leave it |
 | `.gitattributes` | `* text=auto eol=lf`; images marked binary. Keeps line endings consistent across Windows agents | Leave it |
-| `INSTRUCTIONS.md` | Agent playbook for adding/updating/removing entries | Keep in sync with schema |
 | `PLAN.md` | This file | Update on any technical change |
 | `README.md` | Short human-facing intro and links | Rarely |
 
