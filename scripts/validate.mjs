@@ -1,4 +1,4 @@
-// Validates projects.json against the rules in INSTRUCTIONS.md.
+// Validates projects.json against the portfolio rules (see PLAN.md §5).
 // Usage: node scripts/validate.mjs   (exits 1 and lists every problem if anything is wrong)
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { dirname, join, extname } from "node:path";
