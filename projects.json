@@ -33,7 +33,12 @@
         "Desktop",
         "Productivity"
       ],
-      "platforms": [],
+      "platforms": [
+        {
+          "type": "microsoft-store",
+          "url": "https://apps.microsoft.com/detail/9NG0MKF75N74"
+        }
+      ],
       "addedOn": "2026-10-29"
     },
     {
