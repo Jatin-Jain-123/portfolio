@@ -52,7 +52,12 @@
         "Productivity",
         "AI"
       ],
-      "platforms": [],
+      "platforms": [
+        {
+          "type": "microsoft-store",
+          "url": "https://apps.microsoft.com/detail/9PGR85X4F3GB"
+        }
+      ],
       "addedOn": "2026-10-30"
     }
   ]
