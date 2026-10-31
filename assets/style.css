@@ -311,7 +311,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
   padding: 24px 16px 40px;
 }
 .footer p { margin: 4px 0; }
-.footer .motto { margin-bottom: 14px; color: var(--text); font-size: .95rem; font-style: italic; }
 .tm-notice { font-size: .78rem; opacity: .85; }
 .tm-notice[hidden] { display: none; }
 

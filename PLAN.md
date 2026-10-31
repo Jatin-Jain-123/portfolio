@@ -60,7 +60,6 @@ Top to bottom:
 3. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
 4. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
 5. **Footer:**
-   - Motto: *"Build things you’d be proud to show."* Static text in `index.html`, slightly larger and italic in the body text colour so it reads as a sign-off.
    - Line 1: `© <years> Jatin Jain. All rights reserved.` Years = `START_YEAR` (2026, in `app.js`), or `2026–<current>` once the current year is later.
    - Line 2, the trademark notice, shown only when ≥ 1 project exists. It names only the mark types in use: *"Product names marked ™ are trademarks of Jatin Jain."*, *"…marked ® are registered trademarks…"*, or both combined (*"Product names marked ™ are trademarks, and those marked ® are registered trademarks, of Jatin Jain."*).
 
@@ -268,3 +267,4 @@ When changing anything beyond a single project entry:
 - **2026-10-27:** Added copyright notices (footer with auto year range, meta tag, README) and trademark marks: superscript ™ after every project name by default, ® via `"mark": "r"` on the owner's explicit instruction. The footer trademark notice and validator rules were added with it.
 - **2026-10-29:** Added a light/dark toggle button (top-right of the header). Defaults to the OS preference; an explicit choice is saved in `localStorage` and applied before first paint.
 - **2026-10-30:** Added the footer motto "Build things you’d be proud to show." above the © line.
+- **2026-10-31:** Removed the footer motto again at the owner's request.
