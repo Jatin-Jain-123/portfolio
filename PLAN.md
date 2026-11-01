@@ -10,7 +10,7 @@
 
 This repo has exactly **one job: publicly display Jatin Jain's portfolio of projects** as a single web page.
 
-- **Owner:** Jatin Jain. GitHub: [`Jatin-Jain-123`](https://github.com/Jatin-Jain-123), LinkedIn: `linkedin.com/in/jatin-jain-123-`, Email: `jatin321jain@gmail.com`
+- **Owner:** Jatin Jain. GitHub: [`Jatin-Jain-123`](https://github.com/Jatin-Jain-123), LinkedIn: `linkedin.com/in/jatin-jain-123-`, Medium: `jatin-jain.medium.com`, Email: `jatin321jain@gmail.com`
 - **Live site:** https://jatin-jain-123.github.io/portfolio/
 - **Repo:** https://github.com/Jatin-Jain-123/portfolio (**public**)
 - **Local clone:** `C:\Users\jatin\Downloads\projects\portfolio`
@@ -55,7 +55,7 @@ Every project Jatin builds has **two repos**:
 
 Top to bottom:
 
-1. **Header:** name "Jatin Jain", tagline, round social icon buttons (GitHub, LinkedIn, Email via `mailto:`), each with a tooltip.
+1. **Header:** name "Jatin Jain", tagline, round social icon buttons (GitHub, LinkedIn, Medium blog, Email via `mailto:`), each with a tooltip.
 2. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
 3. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
 4. **Footer:**
@@ -101,7 +101,7 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
 | `logos/.gitkeep` | Keeps the folder in git while it's empty | Leave it |
 | `assets/platforms.json` | Platform registry: `key → { label, action }` | Maintainers / agents adding a platform type |
 | `assets/platforms/<key>.svg` | Monochrome platform icons, one per registry key | Same |
-| `assets/social/*.svg` | Header social icons (github, linkedin, email) | Maintainers |
+| `assets/social/*.svg` | Header social icons (github, linkedin, medium, email) | Maintainers |
 | `assets/theme/*.svg` | Theme toggle icons (sun, moon), hand-drawn | Maintainers |
 | `scripts/validate.mjs` | Data validator (Node ≥ 18, zero deps) | Maintainers |
 | `.github/workflows/validate.yml` | Runs the validator on push to `main` and on PRs (Node 22) | Maintainers |
@@ -196,7 +196,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 | Content source | One `projects.json`, client-rendered | Hard-coded HTML per tile; one file per project + build step; Jekyll `_data` | Agents only touch data, never markup, so they can't break the layout. A single file needs no build or manifest. **Cost:** concurrent agents can produce git conflicts in the same file. Mitigated by `pull --rebase` and the "keep both entries" rule. **Cost:** no SEO for tile content (fine for a portfolio linked directly). |
 | Platform registry | Separate `assets/platforms.json` + SVG per key | Hard-coded map in `app.js` | Shared by `app.js` and the validator with one source of truth. Adding a platform is data-only. |
 | Icons | Local SVGs as CSS masks | Icon CDN / icon font; `<img>` tags | No third-party requests. Masks follow `currentColor` for theming. `<img>` can't be recoloured. |
-| Icon sources | [Simple Icons](https://simpleicons.org) v13.21.0 (CC0) for most; **hand-drawn generic glyphs** for `vscode-marketplace`, `microsoft-store`, `winget`, `website`, email | Official brand assets | Simple Icons removed Microsoft brands (VS Code, Microsoft Store, Windows), so those are simple stand-ins (four squares with a tilted one; a shopping bag with a grid; a package box). LinkedIn's SVG came from Simple Icons v9.21.0. |
+| Icon sources | [Simple Icons](https://simpleicons.org) v13.21.0 (CC0) for most; **hand-drawn generic glyphs** for `vscode-marketplace`, `microsoft-store`, `winget`, `website`, email | Official brand assets | Simple Icons removed Microsoft brands (VS Code, Microsoft Store, Windows), so those are simple stand-ins (four squares with a tilted one; a shopping bag with a grid; a package box). LinkedIn's SVG came from Simple Icons v9.21.0; Medium's from v13.21.0. |
 | Tooltips | CSS `data-tip` | Native `title`; JS tooltip library | Instant, styled, themeable, no JS. Native `title` is slow and unstyled. **Cost:** not shown on touch; `aria-label` covers accessibility. |
 | Filter | None; tags are plain labels on tiles | Single-select tag chip bar with `#tag=` deep links (shipped 2026-10-27, removed 2026-11-02); multi-select; search box | Owner found the chip row cluttered. With few projects, scanning the grid is faster than filtering. Tags still describe each tile. |
 | Logo click target | Project's public GitHub Pages site | Repo URL | Two-repo model (§2): source repos are private. The Pages site is the public detail page. |
@@ -265,3 +265,4 @@ When changing anything beyond a single project entry:
 - **2026-10-30:** Added the footer motto "Build things you’d be proud to show." above the © line.
 - **2026-10-31:** Removed the footer motto again at the owner's request.
 - **2026-11-02:** Dark is now the default theme (no longer follows the OS); light only when chosen with the toggle. Removed the tag filter bar and `#tag=` deep links; tags on tiles are now plain labels.
+- **2026-11-02:** Added a Medium blog link (https://jatin-jain.medium.com/) to the header socials, between LinkedIn and Email.
