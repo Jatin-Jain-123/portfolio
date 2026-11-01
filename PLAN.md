@@ -56,10 +56,9 @@ Every project Jatin builds has **two repos**:
 Top to bottom:
 
 1. **Header:** name "Jatin Jain", tagline, round social icon buttons (GitHub, LinkedIn, Email via `mailto:`), each with a tooltip.
-2. **Tag filter bar:** chips `All N`, then each tag with its count, sorted by count descending and then alphabetically. **Rendered only when ≥ 2 distinct tags exist.** Single-select: clicking the active chip (or `All`) clears the filter.
-3. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
-4. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
-5. **Footer:**
+2. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
+3. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
+4. **Footer:**
    - Line 1: `© <years> Jatin Jain. All rights reserved.` Years = `START_YEAR` (2026, in `app.js`), or `2026–<current>` once the current year is later.
    - Line 2, the trademark notice, shown only when ≥ 1 project exists. It names only the mark types in use: *"Product names marked ™ are trademarks of Jatin Jain."*, *"…marked ® are registered trademarks…"*, or both combined (*"Product names marked ™ are trademarks, and those marked ® are registered trademarks, of Jatin Jain."*).
 
@@ -70,14 +69,12 @@ Top to bottom:
 | Logo (56×56) | `<a>` to `pageUrl`, new tab. Tooltip: **"Open project page for full details"**. If `logo` is missing or fails to load, a coloured letter is shown instead (first letter of title; hue derived from a hash of the slug). |
 | Title | `<h2>` with the plain name followed by `<sup class="mark">™</sup>` (or `®` when `mark: "r"`). The mark has a tooltip *"<Title> is a trademark of Jatin Jain"* (or *"…registered trademark…"*) and is keyboard-focusable. |
 | Description | Problem solved and value to the user, plain text |
-| Tags | Small buttons; clicking one applies that filter |
+| Tags | Small non-interactive pill labels (`<li class="tag">`). There is no tag filter (removed 2026-11-02 to reduce clutter). Hidden if `tags` is empty. |
 | Platform icons | One 36×36 button per platform, each `<a>` to its URL in a new tab. Tooltip: `"<action> <label>"`, e.g. "Get it on VS Code Marketplace". Section hidden if `platforms` is empty. |
 
 **Sort order:** ascending `order` first; entries without `order` come after, newest `addedOn` first.
 
-**URL state:** the active filter is mirrored in the hash as `#tag=<Tag>` (via `history.replaceState`, so no history spam). Loading a URL with `#tag=X` applies the filter. An unknown tag falls back to "All".
-
-**Theming:** light/dark follows `prefers-color-scheme` by default. A round sun/moon button at the top-right of the header switches theme; its tooltip and `aria-label` say what it will switch to ("Switch to dark mode"). The choice is saved in `localStorage` under `theme` (`"light"`/`"dark"`) and set as `data-theme` on `<html>` by a tiny inline script in `<head>`, so it applies before first paint (no flash). With no saved choice, the page keeps following the OS live.
+**Theming:** **dark is the default** for every visitor, regardless of the OS `prefers-color-scheme`. A round sun/moon button at the top-right of the header switches theme; its tooltip and `aria-label` say what it will switch to ("Switch to light mode"). The choice is saved in `localStorage` under `theme` (`"light"`/`"dark"`) and set as `data-theme` on `<html>` by a tiny inline script in `<head>`, so it applies before first paint (no flash).
 
 ---
 
@@ -96,9 +93,9 @@ browser ──GET──> index.html ──loads──> assets/style.css, assets/
 
 | Path | Purpose | Who edits |
 |---|---|---|
-| `index.html` | Shell: meta/OG tags, inline-SVG "JJ" favicon (data URI), inline pre-paint theme script, header, theme toggle, socials, filter container, grid, empty state, footer, `<template>` for a tile | Maintainers only |
-| `assets/style.css` | All styling; design tokens as CSS custom properties on `:root`; dark overrides twice, identically: in `@media (prefers-color-scheme: dark)` on `:root:not([data-theme="light"])`, and on `:root[data-theme="dark"]` | Maintainers only |
-| `assets/app.js` | Rendering, filtering, sorting, URL hash, icon masking, fallback logos. Vanilla ES2020 in an IIFE, no globals | Maintainers only |
+| `index.html` | Shell: meta/OG tags, inline-SVG "JJ" favicon (data URI), inline pre-paint theme script, header, theme toggle, socials, grid, empty state, footer, `<template>` for a tile | Maintainers only |
+| `assets/style.css` | All styling; design tokens as CSS custom properties: dark values on `:root` (the default), light overrides on `:root[data-theme="light"]` | Maintainers only |
+| `assets/app.js` | Rendering, sorting, theme toggle, icon masking, fallback logos. Vanilla ES2020 in an IIFE, no globals | Maintainers only |
 | `projects.json` | **The data.** `{ "projects": [ ... ] }` | Project agents (via INSTRUCTIONS.md) |
 | `logos/<slug>.<ext>` | Project logos | Project agents |
 | `logos/.gitkeep` | Keeps the folder in git while it's empty | Leave it |
@@ -152,7 +149,7 @@ Current keys (13): `github-releases`, `vscode-marketplace`, `npm`, `pypi`, `chro
 
 ### Suggested tag vocabulary
 
-`Desktop` · `CLI` · `Web App` · `Browser Extension` · `VS Code Extension` · `Mobile` · `Bot` · `Developer Tools` · `Productivity` · `AI` · `Automation` · `Fun`. Agents should reuse existing tags before inventing new ones, to keep the filter bar small.
+`Desktop` · `CLI` · `Web App` · `Browser Extension` · `VS Code Extension` · `Mobile` · `Bot` · `Developer Tools` · `Productivity` · `AI` · `Automation` · `Fun`. Agents should reuse existing tags before inventing new ones, to keep tiles consistent.
 
 ---
 
@@ -164,8 +161,7 @@ Current keys (13): `github-releases`, `vscode-marketplace`, `npm`, `pypi`, `chro
 - **Icons:** monochrome SVGs are rendered as CSS masks (`mask-image` set inline from JS) over `background-color: currentColor`, so one SVG adapts to light/dark/hover colours. The mask image is set **inline** (not via a CSS custom property) so relative URLs resolve against the document, not the stylesheet.
 - **Trademark marks:** `MARKS = { tm: "™", r: "®" }` with nouns for tooltips. `markOf(p)` falls back to ™ for a missing or unknown value. The symbol is appended as a `<sup class="mark">` after the title text. It's styled with `position: relative; top: -0.7em` (not `vertical-align: super`) so the title's line height doesn't shift. The logo's `aria-label` includes the symbol. `renderTrademarkNotice()` builds the footer notice from the marks actually used. `OWNER` and `START_YEAR` constants live at the top of `app.js`.
 - **Tooltips:** pure CSS from a `data-tip` attribute (`::after`). Elements at the start of a row get class `tip-start` (left-anchored) so tips don't clip off the left edge on small screens. Tooltips are hover/focus only; on touch devices `aria-label` carries the meaning.
-- **Filtering:** toggles the `hidden` attribute on tiles. **CSS must keep `.tile[hidden] { display: none; }`**, because `.tile { display:flex }` would otherwise override `hidden`. (This was a real bug, caught in testing.)
-- **Accessibility:** semantic landmarks, `aria-live` grid, `aria-pressed` on chips, `aria-label` on icon-only links, visible `:focus-visible` outlines, `prefers-reduced-motion` disables transitions, external links use `rel="noopener"`.
+- **Accessibility:** semantic landmarks, `aria-live` grid, `aria-label` on icon-only links, visible `:focus-visible` outlines, `prefers-reduced-motion` disables transitions, external links use `rel="noopener"`.
 
 ---
 
@@ -202,13 +198,13 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 | Icons | Local SVGs as CSS masks | Icon CDN / icon font; `<img>` tags | No third-party requests. Masks follow `currentColor` for theming. `<img>` can't be recoloured. |
 | Icon sources | [Simple Icons](https://simpleicons.org) v13.21.0 (CC0) for most; **hand-drawn generic glyphs** for `vscode-marketplace`, `microsoft-store`, `winget`, `website`, email | Official brand assets | Simple Icons removed Microsoft brands (VS Code, Microsoft Store, Windows), so those are simple stand-ins (four squares with a tilted one; a shopping bag with a grid; a package box). LinkedIn's SVG came from Simple Icons v9.21.0. |
 | Tooltips | CSS `data-tip` | Native `title`; JS tooltip library | Instant, styled, themeable, no JS. Native `title` is slow and unstyled. **Cost:** not shown on touch; `aria-label` covers accessibility. |
-| Filter | Single-select tag chips, hidden below 2 tags, hash-synced | Multi-select; search box; always-visible bar | Simplest useful behaviour. Shareable links. No clutter while the portfolio is small. |
+| Filter | None; tags are plain labels on tiles | Single-select tag chip bar with `#tag=` deep links (shipped 2026-10-27, removed 2026-11-02); multi-select; search box | Owner found the chip row cluttered. With few projects, scanning the grid is faster than filtering. Tags still describe each tile. |
 | Logo click target | Project's public GitHub Pages site | Repo URL | Two-repo model (§2): source repos are private. The Pages site is the public detail page. |
 | Validation | Node script + CI, unknown fields rejected | JSON Schema + ajv; no validation | Zero deps (no `npm install`). Precise human-readable errors that agents can act on. Strictness catches typos. **Cost:** CI doesn't gate deploys. |
 | Deploy | Branch-based Pages | Actions-based Pages deploy gated on validation | Simplest setup. **Cost:** an invalid push goes live until fixed. Upgrade path: switch Pages source to "GitHub Actions" and deploy only after `validate` passes. |
 | Trademark symbol | Rendered by the page from a `mark` field (default ™) | Agents type ™/® into `title` | One consistent style and position. Upgrading to ® is a one-field change. The footer notice can be derived from it. Titles stay clean for `aria-label`s, tooltips and sorting. The validator forbids symbols in text so they can't double up. |
 | Copyright years | `START_YEAR`–current, computed in JS | Hard-coded year | Never goes stale; no yearly commit needed. |
-| Theme | `prefers-color-scheme` by default + manual toggle persisted in `localStorage` | Auto only (the original choice); toggle without persistence | Owner asked for a toggle (2026-10-29). Defaulting to the OS keeps first visits right; persisting avoids re-toggling on every visit. **Cost:** dark tokens are duplicated in two CSS blocks that must stay identical. |
+| Theme | Dark by default + manual toggle persisted in `localStorage` | Follow `prefers-color-scheme` (used 2026-10-27 → 2026-11-02); toggle without persistence | Owner asked for a toggle (2026-10-29) and for dark as the default (2026-11-02). Persisting avoids re-toggling on every visit. One token block per theme, no duplication. |
 | Fonts | System font stack | Google Fonts | No external requests, instant render. |
 | Line endings | `.gitattributes` forcing LF | Default autocrlf | The owner is on Windows; prevents noisy whole-file diffs from agents. |
 
@@ -227,11 +223,11 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 - **Data:** `node scripts/validate.mjs`. Spot-check negative cases by running it against deliberately broken data.
 - **Visual:** serve a scratch copy with sample entries (never commit sample entries to the real `projects.json`). Screenshot with headless Chrome, e.g.
   `chrome --headless=new --window-size=1280,1000 --virtual-time-budget=3000 --screenshot=out.png http://localhost:8765/`.
-  - Dark mode: add `--blink-settings=preferredColorScheme=0`.
-  - Forced theme: load with the toggle state preset, e.g. a wrapper page that sets `localStorage.theme` then redirects, or inject `document.documentElement.dataset.theme = "dark"`.
+  - Default theme: add `--blink-settings=preferredColorScheme=1` (OS light) and confirm the page still renders dark.
+  - Light theme: load with the toggle state preset, e.g. a wrapper page that sets `localStorage.theme = "light"` then redirects, or inject `document.documentElement.dataset.theme = "light"`.
   - Phone width: headless Chrome enforces a minimum window width, so load the page inside a 375px-wide `<iframe>` wrapper page.
   - Tooltips: inject CSS forcing `[data-tip]::after { opacity:1 }`.
-- **Checklist:** theme toggle flips light/dark, its icon and tooltip update, and the choice survives a reload; ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; filter hides/shows tiles; `#tag=X` deep link works; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; dark-mode contrast of the selected chip; tooltips not clipped.
+- **Checklist:** first visit renders dark whatever the OS preference; theme toggle flips light/dark, its icon and tooltip update, and the choice survives a reload; ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; tags show on tiles as plain labels; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; tooltips not clipped.
 
 ---
 
@@ -243,7 +239,7 @@ When changing anything beyond a single project entry:
 2. **New platform type:** SVG in `assets/platforms/`, entry in `assets/platforms.json`, row in INSTRUCTIONS.md's platform table, key list in §5.
 3. **Trademark/copyright change:** a project becomes registered → set `"mark": "r"` on that entry only. Owner name or start year → the `OWNER`/`START_YEAR` constants in `app.js`, the footer and `<meta name="copyright">` in `index.html`, the README footer, and §1 here.
 4. **Header/social/tagline change:** `index.html` (header and `<meta>`/OG description) and §1 here.
-5. **Design change:** edit tokens in `:root` and **both** dark blocks in `style.css`. Re-run the visual tests in §11.
+5. **Design change:** edit tokens in `:root` (dark) and `:root[data-theme="light"]` in `style.css`. Re-run the visual tests in §11.
 6. Run the validator, commit with a descriptive message, push to `main`, verify the deploy (§8).
 7. **Update this file** in the same commit if any fact in it changed.
 
@@ -254,7 +250,7 @@ When changing anything beyond a single project entry:
 - Gate deploys on validation (Pages source → GitHub Actions).
 - Server-render tiles into `index.html` at deploy time for SEO/no-JS.
 - Per-project JSON files plus a generated manifest, to eliminate merge conflicts.
-- Multi-select filter or a search box once the project count grows.
+- A tag filter or search box once the project count grows (a chip filter bar existed until 2026-11-02 and was removed as clutter).
 - Automated link checking (detect dead `pageUrl`/platform links) on a schedule.
 - Open Graph preview image.
 - Show the mark in other places where a project name appears, if any are added later (e.g. per-project OG text).
@@ -268,3 +264,4 @@ When changing anything beyond a single project entry:
 - **2026-10-29:** Added a light/dark toggle button (top-right of the header). Defaults to the OS preference; an explicit choice is saved in `localStorage` and applied before first paint.
 - **2026-10-30:** Added the footer motto "Build things you’d be proud to show." above the © line.
 - **2026-10-31:** Removed the footer motto again at the owner's request.
+- **2026-11-02:** Dark is now the default theme (no longer follows the OS); light only when chosen with the toggle. Removed the tag filter bar and `#tag=` deep links; tags on tiles are now plain labels.

@@ -1,42 +1,4 @@
 :root {
-  --bg: #f7f7f9;
-  --surface: #ffffff;
-  --text: #16161d;
-  --muted: #5b5b6b;
-  --border: #e4e4ea;
-  --accent: #4f46e5;
-  --accent-soft: #eef0ff;
-  --on-accent: #ffffff;
-  --chip-bg: #f0f0f4;
-  --tip-bg: #16161d;
-  --tip-text: #ffffff;
-  --shadow: 0 1px 2px rgba(20, 20, 40, .04), 0 4px 16px rgba(20, 20, 40, .05);
-  --shadow-hover: 0 2px 4px rgba(20, 20, 40, .06), 0 12px 32px rgba(20, 20, 40, .10);
-  --radius: 16px;
-  color-scheme: light;
-}
-
-/* Dark tokens apply when the OS prefers dark (unless the visitor picked light), or when they picked dark.
-   The two blocks below must stay identical. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e0e13;
-    --surface: #17171f;
-    --text: #ececf1;
-    --muted: #9b9bab;
-    --border: #2a2a36;
-    --accent: #8b85ff;
-    --accent-soft: #23224a;
-    --on-accent: #0e0e13;
-    --chip-bg: #22222c;
-    --tip-bg: #ececf1;
-    --tip-text: #16161d;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
-    --shadow-hover: 0 12px 32px rgba(0, 0, 0, .45);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
   --bg: #0e0e13;
   --surface: #17171f;
   --text: #ececf1;
@@ -50,7 +12,26 @@
   --tip-text: #16161d;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3);
   --shadow-hover: 0 12px 32px rgba(0, 0, 0, .45);
+  --radius: 16px;
   color-scheme: dark;
+}
+
+/* Dark is the default; light tokens apply only when the visitor picks light with the toggle. */
+:root[data-theme="light"] {
+  --bg: #f7f7f9;
+  --surface: #ffffff;
+  --text: #16161d;
+  --muted: #5b5b6b;
+  --border: #e4e4ea;
+  --accent: #4f46e5;
+  --accent-soft: #eef0ff;
+  --on-accent: #ffffff;
+  --chip-bg: #f0f0f4;
+  --tip-bg: #16161d;
+  --tip-text: #ffffff;
+  --shadow: 0 1px 2px rgba(20, 20, 40, .04), 0 4px 16px rgba(20, 20, 40, .05);
+  --shadow-hover: 0 2px 4px rgba(20, 20, 40, .06), 0 12px 32px rgba(20, 20, 40, .10);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -143,33 +124,9 @@ a { color: inherit; }
 .theme-toggle[data-tip]::after { bottom: auto; top: calc(100% + 8px); left: auto; right: 0; transform: translate(0, -4px); }
 .theme-toggle[data-tip]:hover::after, .theme-toggle[data-tip]:focus-visible::after { transform: translate(0, 0); }
 
-/* ---------- Filters ---------- */
-main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin: 8px 0 28px;
-}
-.filters[hidden] { display: none; }
-.chip {
-  font: inherit;
-  font-size: .85rem;
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all .15s;
-}
-.chip:hover { color: var(--text); border-color: var(--muted); }
-.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.chip .count { opacity: .7; margin-left: 4px; }
-
 /* ---------- Grid & tiles ---------- */
+main { max-width: 1120px; margin: 0 auto; padding: 8px 16px 48px; }
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
@@ -187,7 +144,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
   transition: box-shadow .2s, transform .2s;
   min-width: 0;
 }
-.tile[hidden] { display: none; }
 .tile:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
 
 .tile-head { display: flex; align-items: center; gap: 14px; }
@@ -241,16 +197,12 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 48px; }
 .tags { gap: 6px; }
 .tags:empty { display: none; }
 .tag {
-  font: inherit;
   font-size: .75rem;
   padding: 2px 10px;
   border-radius: 999px;
-  border: 0;
   background: var(--chip-bg);
   color: var(--muted);
-  cursor: pointer;
 }
-.tag:hover { background: var(--accent-soft); color: var(--accent); }
 
 .platforms { gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); }
 .platforms:empty { display: none; }

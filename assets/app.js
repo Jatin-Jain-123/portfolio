@@ -3,7 +3,6 @@
   "use strict";
 
   const grid = document.getElementById("grid");
-  const filtersEl = document.getElementById("filters");
   const emptyEl = document.getElementById("empty");
   const template = document.getElementById("tile-template");
 
@@ -29,12 +28,11 @@
 
   document.querySelectorAll("[data-icon]").forEach((el) => setIcon(el, el.dataset.icon));
 
-  // Light/dark toggle. Follows the OS until the visitor picks one; the choice is kept in localStorage
+  // Light/dark toggle. Dark by default; a visitor's choice is kept in localStorage
   // and applied before first paint by the inline script in index.html.
   const root = document.documentElement;
   const themeToggle = document.getElementById("theme-toggle");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-  const currentTheme = () => root.dataset.theme || (prefersDark.matches ? "dark" : "light");
+  const currentTheme = () => (root.dataset.theme === "light" ? "light" : "dark");
 
   function syncThemeToggle() {
     const next = currentTheme() === "dark" ? "light" : "dark";
@@ -50,7 +48,6 @@
     try { localStorage.setItem("theme", next); } catch { /* storage blocked: choice lasts for this page view */ }
     syncThemeToggle();
   });
-  prefersDark.addEventListener("change", syncThemeToggle);
   syncThemeToggle();
 
   // Only ever link to http(s) URLs coming from the data file.
@@ -85,7 +82,7 @@
     return String(b.addedOn || "").localeCompare(String(a.addedOn || ""));
   }
 
-  function buildTile(project, platforms, onTagClick) {
+  function buildTile(project, platforms) {
     const node = template.content.firstElementChild.cloneNode(true);
     node.dataset.slug = project.slug;
 
@@ -121,12 +118,8 @@
     const tagsEl = node.querySelector(".tags");
     for (const tag of project.tags || []) {
       const li = document.createElement("li");
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "tag";
-      btn.textContent = tag;
-      btn.addEventListener("click", () => onTagClick(tag));
-      li.append(btn);
+      li.className = "tag";
+      li.textContent = tag;
       tagsEl.append(li);
     }
 
@@ -168,51 +161,7 @@
 
   function render(projects, platforms) {
     renderTrademarkNotice(projects);
-    const tiles = projects.map((p) => ({ project: p, el: buildTile(p, platforms, selectTag) }));
-    tiles.forEach((t) => grid.append(t.el));
-
-    // Tag counts, most used first, for the filter bar.
-    const counts = new Map();
-    projects.forEach((p) => (p.tags || []).forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
-    const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-
-    let active = null;
-
-    function chip(label, tag, count) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "chip";
-      btn.dataset.tag = tag ?? "";
-      btn.textContent = label;
-      const c = document.createElement("span");
-      c.className = "count";
-      c.textContent = count;
-      btn.append(c);
-      btn.addEventListener("click", () => selectTag(tag === active ? null : tag));
-      return btn;
-    }
-
-    // The filter bar only earns its place once there is something to filter.
-    if (tags.length >= 2) {
-      filtersEl.append(chip("All", null, projects.length));
-      tags.forEach(([t, n]) => filtersEl.append(chip(t, t, n)));
-      filtersEl.hidden = false;
-    }
-
-    function selectTag(tag) {
-      active = tag && counts.has(tag) ? tag : null;
-      tiles.forEach(({ project, el }) => {
-        el.hidden = active !== null && !(project.tags || []).includes(active);
-      });
-      filtersEl.querySelectorAll(".chip").forEach((c) => {
-        c.setAttribute("aria-pressed", String((c.dataset.tag || null) === active));
-      });
-      // Keep the URL shareable: /portfolio/#tag=CLI opens with that filter applied.
-      history.replaceState(null, "", active ? `#tag=${encodeURIComponent(active)}` : location.pathname + location.search);
-    }
-
-    const fromHash = new URLSearchParams(location.hash.slice(1)).get("tag");
-    selectTag(fromHash);
+    projects.forEach((p) => grid.append(buildTile(p, platforms)));
   }
 
   function showEmpty(message) {
