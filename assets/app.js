@@ -148,19 +148,7 @@
     return node;
   }
 
-  // Footer notice naming only the mark types actually in use.
-  function renderTrademarkNotice(projects) {
-    const used = new Set(projects.map((p) => markOf(p).symbol));
-    const parts = [];
-    if (used.has("™")) parts.push("marked ™ are trademarks");
-    if (used.has("®")) parts.push(`${parts.length ? "those " : ""}marked ® are registered trademarks`);
-    const el = document.getElementById("tm-notice");
-    el.textContent = `Product names ${parts.join(", and ")}${parts.length > 1 ? "," : ""} of ${OWNER}.`;
-    el.hidden = false;
-  }
-
   function render(projects, platforms) {
-    renderTrademarkNotice(projects);
     projects.forEach((p) => grid.append(buildTile(p, platforms)));
   }
 

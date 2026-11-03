@@ -58,9 +58,7 @@ Top to bottom:
 1. **Header:** name "Jatin Jain", tagline, round social icon buttons (GitHub, LinkedIn, Medium blog, Email via `mailto:`), each with a tooltip.
 2. **Grid of tiles:** responsive auto-fill columns, min 300px (`min(300px, 100%)` so it never overflows phones).
 3. **Empty state:** "Projects are on their way. Check back soon." when there are 0 projects. A load-failure message replaces it if the fetch fails.
-4. **Footer:**
-   - Line 1: `© <years> Jatin Jain. All rights reserved.` Years = `START_YEAR` (2026, in `app.js`), or `2026–<current>` once the current year is later.
-   - Line 2, the trademark notice, shown only when ≥ 1 project exists. It names only the mark types in use: *"Product names marked ™ are trademarks of Jatin Jain."*, *"…marked ® are registered trademarks…"*, or both combined (*"Product names marked ™ are trademarks, and those marked ® are registered trademarks, of Jatin Jain."*).
+4. **Footer:** a single line, `© <years> Jatin Jain. All rights reserved.` Years = `START_YEAR` (2026, in `app.js`), or `2026–<current>` once the current year is later. There is no trademark notice line (removed 2026-11-04 as self-evident; the per-title ™/® marks and their tooltips remain).
 
 **Each tile contains:**
 
@@ -159,7 +157,7 @@ Current keys (13): `github-releases`, `vscode-marketplace`, `npm`, `pypi`, `chro
 - **Defensive filtering:** entries missing `slug` or `title` are skipped at runtime, even though the validator should already prevent them.
 - **XSS safety:** all data goes in through `textContent` / attributes, **never `innerHTML`**. URLs pass through `safeUrl()`, which allows only `http:`/`https:`, so `javascript:` URLs are dropped. Unknown platform types are silently skipped.
 - **Icons:** monochrome SVGs are rendered as CSS masks (`mask-image` set inline from JS) over `background-color: currentColor`, so one SVG adapts to light/dark/hover colours. The mask image is set **inline** (not via a CSS custom property) so relative URLs resolve against the document, not the stylesheet.
-- **Trademark marks:** `MARKS = { tm: "™", r: "®" }` with nouns for tooltips. `markOf(p)` falls back to ™ for a missing or unknown value. The symbol is appended as a `<sup class="mark">` after the title text. It's styled with `position: relative; top: -0.7em` (not `vertical-align: super`) so the title's line height doesn't shift. The logo's `aria-label` includes the symbol. `renderTrademarkNotice()` builds the footer notice from the marks actually used. `OWNER` and `START_YEAR` constants live at the top of `app.js`.
+- **Trademark marks:** `MARKS = { tm: "™", r: "®" }` with nouns for tooltips. `markOf(p)` falls back to ™ for a missing or unknown value. The symbol is appended as a `<sup class="mark">` after the title text. It's styled with `position: relative; top: -0.7em` (not `vertical-align: super`) so the title's line height doesn't shift. The logo's `aria-label` includes the symbol. `OWNER` and `START_YEAR` constants live at the top of `app.js`.
 - **Tooltips:** pure CSS from a `data-tip` attribute (`::after`). Elements at the start of a row get class `tip-start` (left-anchored) so tips don't clip off the left edge on small screens. Tooltips are hover/focus only; on touch devices `aria-label` carries the meaning.
 - **Accessibility:** semantic landmarks, `aria-live` grid, `aria-label` on icon-only links, visible `:focus-visible` outlines, `prefers-reduced-motion` disables transitions, external links use `rel="noopener"`.
 
@@ -202,7 +200,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
 | Logo click target | Project's public GitHub Pages site | Repo URL | Two-repo model (§2): source repos are private. The Pages site is the public detail page. |
 | Validation | Node script + CI, unknown fields rejected | JSON Schema + ajv; no validation | Zero deps (no `npm install`). Precise human-readable errors that agents can act on. Strictness catches typos. **Cost:** CI doesn't gate deploys. |
 | Deploy | Branch-based Pages | Actions-based Pages deploy gated on validation | Simplest setup. **Cost:** an invalid push goes live until fixed. Upgrade path: switch Pages source to "GitHub Actions" and deploy only after `validate` passes. |
-| Trademark symbol | Rendered by the page from a `mark` field (default ™) | Agents type ™/® into `title` | One consistent style and position. Upgrading to ® is a one-field change. The footer notice can be derived from it. Titles stay clean for `aria-label`s, tooltips and sorting. The validator forbids symbols in text so they can't double up. |
+| Trademark symbol | Rendered by the page from a `mark` field (default ™) | Agents type ™/® into `title` | One consistent style and position. Upgrading to ® is a one-field change. Titles stay clean for `aria-label`s, tooltips and sorting. The validator forbids symbols in text so they can't double up. |
 | Copyright years | `START_YEAR`–current, computed in JS | Hard-coded year | Never goes stale; no yearly commit needed. |
 | Theme | Dark by default + manual toggle persisted in `localStorage` | Follow `prefers-color-scheme` (used 2026-10-27 → 2026-11-02); toggle without persistence | Owner asked for a toggle (2026-10-29) and for dark as the default (2026-11-02). Persisting avoids re-toggling on every visit. One token block per theme, no duplication. |
 | Fonts | System font stack | Google Fonts | No external requests, instant render. |
@@ -227,7 +225,7 @@ CI (`.github/workflows/validate.yml`) runs it on push to `main` and on PRs. **CI
   - Light theme: load with the toggle state preset, e.g. a wrapper page that sets `localStorage.theme = "light"` then redirects, or inject `document.documentElement.dataset.theme = "light"`.
   - Phone width: headless Chrome enforces a minimum window width, so load the page inside a 375px-wide `<iframe>` wrapper page.
   - Tooltips: inject CSS forcing `[data-tip]::after { opacity:1 }`.
-- **Checklist:** first visit renders dark whatever the OS preference; theme toggle flips light/dark, its icon and tooltip update, and the choice survives a reload; ™ shows after every title and ® when `mark: "r"`; footer © line and the trademark notice wording; tags show on tiles as plain labels; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; tooltips not clipped.
+- **Checklist:** first visit renders dark whatever the OS preference; theme toggle flips light/dark, its icon and tooltip update, and the choice survives a reload; ™ shows after every title and ® when `mark: "r"`; footer © line (and no trademark notice line); tags show on tiles as plain labels; fallback logo renders when `logo` is missing or broken; no horizontal scroll at 375px; tooltips not clipped.
 
 ---
 
@@ -266,3 +264,4 @@ When changing anything beyond a single project entry:
 - **2026-10-31:** Removed the footer motto again at the owner's request.
 - **2026-11-02:** Dark is now the default theme (no longer follows the OS); light only when chosen with the toggle. Removed the tag filter bar and `#tag=` deep links; tags on tiles are now plain labels.
 - **2026-11-02:** Added a Medium blog link (https://jatin-jain.medium.com/) to the header socials, between LinkedIn and Email.
+- **2026-11-04:** Removed the footer trademark notice ("Product names marked ™ are trademarks of Jatin Jain.") at the owner's request, as self-evident. The ™/® marks after titles and their tooltips stay.

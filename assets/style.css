@@ -263,8 +263,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 8px 16px 48px; }
   padding: 24px 16px 40px;
 }
 .footer p { margin: 4px 0; }
-.tm-notice { font-size: .78rem; opacity: .85; }
-.tm-notice[hidden] { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
